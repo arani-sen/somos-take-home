@@ -1,28 +1,5 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
-const typeDefs = `#graphql
-
-  type Book {
-    title: String
-    author: Author
-    coverImage: String
-    publishedDate: String
-  }
-
-  type Author {
-    firstName: String!
-    lastName: String!
-  }
-
-  type Query {
-    books: [Book]
-  }
-`;
-
 const books = [
   {
     title: "The Awakening",
@@ -34,21 +11,97 @@ const books = [
   },
 ];
 
+const queries = ` 
+  type Query {
+    """
+    This will provide a list of books.
+    """
+    books: [Book]
+
+    """
+    When given a specific id, this will return a specific book. 
+    """
+    book(id: String): Book
+  }
+`;
+
+const mutations = ` 
+  type Mutation {
+    """
+    This will add a book to the "database". 
+    Returns the book that was added. 
+    """
+    addBook(book:BookInput): Book
+
+    """
+    This will update a specific book in the "database". 
+    Returns the newly updated book. 
+    """
+    updateBook(id: Int!, book: BookInput): Book
+
+    """
+    When given a specific id, this will remove the book from the "database"
+    """
+    removeBook(id: Int!): String
+  }
+`;
+
+const types = `
+  type Book {
+    title: String
+    author: Author
+    coverImage: String
+    publishedDate: String
+  }
+
+  """
+    This type will provide all of full name of an author
+  """
+  type Author {
+    firstName: String!
+    lastName: String!
+    birthDate: String
+  }
+`;
+
+const inputTypes = `
+  input BookInput {
+    title: String!
+    author: AuthorInput!
+    coverImage: String
+    publishedDate: String
+  }
+  input AuthorInput {
+    firstName: String!
+    lastName: String!
+    birthDate: String
+  }
+`;
+const typeDefs = `#graphql
+  ${types}
+  
+  ${inputTypes}
+
+  ${queries}
+
+  ${mutations}
+`;
 const resolvers = {
   Query: {
     books: () => books,
+    book: (_, args) => args.random + " insert",
+  },
+  Mutation: {
+    addBook: () => {},
+    updateBook: () => {},
+    removeBook: () => {},
   },
 };
-
 const server = new ApolloServer({
   typeDefs,
   resolvers,
 });
 
-// Passing an ApolloServer instance to the `startStandaloneServer` function:
-//  1. creates an Express app
-//  2. installs your ApolloServer instance as middleware
-//  3. prepares your app to handle incoming requests
 const { url } = await startStandaloneServer(server, {
   listen: { port: 4000 },
 });

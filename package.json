@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "compile": "tsc",
-    "start": "yarn run compile && node ./dist/index.js",
+    "start": "yarn run compile && node ./dist/src/index.js",
     "codegen": "graphql-codegen --config codegen.ts"
   },
   "devDependencies": {
