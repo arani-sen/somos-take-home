@@ -1,0 +1,12 @@
+input BookInput {
+  title: String!
+  authorID: Int!
+  coverImage: String
+  publishedDate: String
+}
+
+input AuthorInput {
+  firstName: String!
+  lastName: String!
+  birthDate: String
+}

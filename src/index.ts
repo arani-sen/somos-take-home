@@ -1,94 +1,33 @@
+import { readFileSync } from "fs";
+import { dirname } from "path";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import {
   MutationAddBookArgs,
   MutationRemoveBookArgs,
   MutationUpdateBookArgs,
-  QueryBookArgs,
+  QueryGetBookArgs,
 } from "./generated/graphql";
 import { BookDB } from "./DB/BookDB";
 import { BookUseCase } from "./usecases/Book";
 
-const queries = ` 
-  type Query {
-    """
-    This will provide a list of books.
-    """
-    books: [Book]
+const queries = readFileSync(`./src/schemas/queries.graphql`, {
+  encoding: "utf-8",
+});
 
-    """
-    When given a specific id, this will return a specific book. 
-    """
-    book(id: Int!): Book
-  }
-`;
+const mutations = readFileSync("./src/schemas/mutations.graphql", {
+  encoding: "utf-8",
+});
 
-const mutations = ` 
-  type Mutation {
-    """
-    This will add a book to the "database". 
-    Returns the book that was added. 
-    """
-    addBook(book:BookInput!): Book
+const types = readFileSync("./src/schemas/types.graphql", {
+  encoding: "utf-8",
+});
 
-    """
-    This will update a specific book in the "database". 
-    Returns the newly updated book. 
-    """
-    updateBook(id: Int!, book: BookInput!): Book
+const inputTypes = readFileSync("./src/schemas/inputs.graphql", {
+  encoding: "utf-8",
+});
 
-    """
-    When given a specific id, this will remove the book from the "database"
-    """
-    removeBook(id: Int!): String
-  }
-`;
-
-const types = `
-  """
-  Information on the Book
-  """
-  type Book {
-    title: String
-    author: Author
-    coverImage: String
-    publishedDate: String
-  }
-
-  """
-  Information of the Author
-  """
-  type Author {
-    firstName: String
-    lastName: String
-    birthDate: String
-  }
-`;
-
-const inputTypes = `
-  input BookInput {
-    title: String!
-    author: AuthorInput!
-    coverImage: String
-    publishedDate: String
-  }
-
-  input AuthorInput {
-    firstName: String!
-    lastName: String!
-    birthDate: String
-  }
-`;
-
-const typeDefs = `#graphql
-  ${types}
-  
-  ${inputTypes}
-
-  ${queries}
-
-  ${mutations}
-`;
+const typeDefs = [types, inputTypes, queries, mutations];
 
 // All instances of code that handles the database calls
 const booksDB = new BookDB();
@@ -98,8 +37,8 @@ const book = new BookUseCase(booksDB);
 
 const resolvers = {
   Query: {
-    books: () => book.getBooks(),
-    book: (_, args: QueryBookArgs) => book.getBook(args.id),
+    getBooks: () => book.getBooks(),
+    getBook: (_, args: QueryGetBookArgs) => book.getBook(args.id),
   },
   Mutation: {
     addBook: (_, args: MutationAddBookArgs) => book.addBook(args.book),

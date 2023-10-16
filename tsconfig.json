@@ -6,7 +6,7 @@
     "target": "ES2020",
     "module": "CommonJS",
     "esModuleInterop": true,
-    "types": ["node"],
+    "types": ["node", "jest"],
     "alwaysStrict": true
   },
   "exclude": ["node_modules"]

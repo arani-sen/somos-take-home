@@ -5,48 +5,42 @@ import { BookInput } from "../generated/graphql";
 export class BookUseCase {
   constructor(private bookDB: BookDB) {}
 
-  getBook(index: number) {
-    this.bookDB.get(index);
+  getBook(id: number) {
+    this.bookDB.getBook(id);
   }
 
   getBooks() {
     const books = this.bookDB
-      .getAll()
+      .getAllBooks()
       .map((currentBook) => this.dbToGraph(currentBook));
+
+    return books;
   }
 
   addBook(bookInput: BookInput) {
     const newBook = this.graphToDB(bookInput);
 
-    const insertedBook = this.bookDB.add(newBook);
+    const insertedBook = this.bookDB.insertBook(newBook);
 
     return this.dbToGraph(insertedBook);
   }
 
-  removeBook(index: number) {
-    return this.bookDB.delete(index);
+  removeBook(id: number) {
+    return this.bookDB.deleteBook(id);
   }
 
-  updateBook(index, bookInput: BookInput) {
+  updateBook(id: number, bookInput: BookInput) {
     const updatedBook = {
       ...bookInput,
-      author: {
-        ...bookInput.author,
-        birthDate: new Date(bookInput.author.birthDate),
-      },
       publishedDate: new Date(bookInput.publishedDate),
     };
 
-    this.bookDB.update(index, updatedBook);
+    this.bookDB.updateBook(id, { id, ...updatedBook });
   }
 
   private graphToDB(graphBook: BookInput) {
     return {
       ...graphBook,
-      author: {
-        ...graphBook.author,
-        birthDate: new Date(graphBook.author.birthDate),
-      },
       publishedDate: new Date(graphBook.publishedDate),
     };
   }
@@ -54,11 +48,7 @@ export class BookUseCase {
   private dbToGraph(dbBook: Book) {
     return {
       ...dbBook,
-      author: {
-        ...dbBook.author,
-        birthDate: new Date(dbBook.author.birthDate),
-      },
-      publishedDate: new Date(dbBook.publishedDate),
+      publishedDate: dbBook.publishedDate.toString(),
     };
   }
 }

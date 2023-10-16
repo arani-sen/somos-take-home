@@ -1,0 +1,20 @@
+"""
+Information on the Book
+"""
+type Book {
+  id: Int
+  title: String
+  author: Author
+  coverImage: String
+  publishedDate: String
+}
+
+"""
+Information of the Author
+"""
+type Author {
+  id: Int
+  firstName: String
+  lastName: String
+  birthDate: String
+}

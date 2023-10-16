@@ -1,0 +1,21 @@
+type Query {
+  """
+  This will provide a list of books.
+  """
+  getBooks: [Book]
+
+  """
+  When given a specific id, this will return a specific book.
+  """
+  getBook(id: Int!): Book
+
+  """
+  This will provide a list of authors.
+  """
+  getAuthors: [Author]
+
+  """
+  When given a specific id, this will return a specific author.
+  """
+  getAuthor(id: Int!): Author
+}
