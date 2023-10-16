@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "type": "module",
   "scripts": {
     "compile": "tsc",
+    "go": "npx ts-node ./src/index.ts",
     "start": "yarn run compile && node ./dist/src/index.js",
     "codegen": "graphql-codegen --config codegen.ts"
   },
