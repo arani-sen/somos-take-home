@@ -120,4 +120,10 @@ describe("Book Use Case tests", () => {
       title: "a book",
     });
   });
+
+  test("remove book and no book exists", () => {
+    fakeDB.getBook = jest.fn().mockReturnValue(null);
+
+    expect(() => book.removeBook(1)).toThrowError("Cannot find book to remove");
+  });
 });
