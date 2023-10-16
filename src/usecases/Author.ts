@@ -1,12 +1,19 @@
 import { BookDB } from "../DB/BookDB";
-import { Author, CannotRemoveAuthor } from "../entities/author";
+import {
+  Author,
+  CannotFindAuthor,
+  CannotRemoveAuthor,
+} from "../entities/author";
 import { AuthorInput } from "../generated/graphql";
 
 export class AuthorUseCase {
   constructor(private bookDB: BookDB) {}
 
   getAuthor(id: number) {
-    this.bookDB.getAuthor(id);
+    const foundAuthor = this.bookDB.getAuthor(id);
+    if (!foundAuthor) throw new CannotFindAuthor("Author was not found ");
+
+    return this.dbToGraph(this.bookDB.getAuthor(id));
   }
 
   getAuthors() {
@@ -26,22 +33,26 @@ export class AuthorUseCase {
   }
 
   removeAuthor(id: number) {
-    const matchingBooks = this.bookDB.getAllBooks().map((book) => {
-      if (book.authorID === id) return book;
-    });
+    //TODO: Check if exists
+    const matchingBooks = this.bookDB
+      .getAllBooks()
+      .filter((book) => book.authorID === id);
 
     if (matchingBooks.length > 0)
       throw new CannotRemoveAuthor(
         "You cannot remove an author attached to a book"
       );
 
-    return this.bookDB.deleteBook(id);
+    return this.bookDB
+      .deleteAuthor(id)
+      .map((currentAuthor) => this.dbToGraph(currentAuthor));
   }
 
   updateAuthor(id: number, authorInput: AuthorInput) {
-    const updatedAuthor = this.graphToDB(authorInput);
+    const dbAuthor = this.graphToDB(authorInput);
 
-    this.bookDB.updateAuthor(id, { id, ...updatedAuthor });
+    const updatedBook = this.bookDB.updateAuthor(id, { id, ...dbAuthor });
+    return this.dbToGraph(updatedBook);
   }
 
   private graphToDB(graphAuthor: AuthorInput) {

@@ -21,3 +21,10 @@ export type Book = {
   coverImage?: String; // URL to location of the cover image
   publishedDate: Date;
 };
+
+export class CannotFindBook extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "CannotFindBook";
+  }
+}

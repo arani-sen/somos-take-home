@@ -1,18 +1,23 @@
 import { BookDB } from "../DB/BookDB";
 import { CannotFindAuthor } from "../entities/author";
-import { Book } from "../entities/book";
+import { Book, CannotFindBook } from "../entities/book";
 import { BookInput } from "../generated/graphql";
 
 export class BookUseCase {
   constructor(private bookDB: BookDB) {}
 
   getBook(id: number) {
-    this.bookDB.getBook(id);
+    const foundBook = this.bookDB.getBook(id);
+    if (!foundBook) throw new CannotFindBook("Book was not found");
+
+    const addedAuthor = this.addAuthorToBook(foundBook);
+    return this.dbToGraph(addedAuthor);
   }
 
   getBooks() {
     const books = this.bookDB
       .getAllBooks()
+      .map((book) => this.addAuthorToBook(book))
       .map((currentBook) => this.dbToGraph(currentBook));
 
     return books;
@@ -22,19 +27,39 @@ export class BookUseCase {
     const newBook = this.graphToDB(bookInput);
     this.checkIfAuthorExists(bookInput.authorID);
     const insertedBook = this.bookDB.insertBook(newBook);
-
-    return this.dbToGraph(insertedBook);
+    const authorAdded = this.addAuthorToBook(insertedBook);
+    return this.dbToGraph(authorAdded);
   }
 
   removeBook(id: number) {
-    return this.bookDB.deleteBook(id);
+    //TODO: Check if exists
+    return this.bookDB
+      .deleteBook(id)
+      .map((book) => this.addAuthorToBook(book))
+      .map((currentBook) => this.dbToGraph(currentBook));
   }
 
   updateBook(id: number, bookInput: BookInput) {
     this.checkIfAuthorExists(bookInput.authorID);
-    const updatedBook = this.graphToDB(bookInput);
+    const bookToDb = this.graphToDB(bookInput);
 
-    this.bookDB.updateBook(id, { id, ...updatedBook });
+    const updatedBook = this.bookDB.updateBook(id, { id, ...bookToDb });
+    const authorAdded = this.addAuthorToBook(updatedBook);
+
+    return this.dbToGraph(authorAdded);
+  }
+
+  private addAuthorToBook(book: Book) {
+    const author = this.bookDB.getAuthor(book.authorID);
+    const graphAuthor = {
+      ...author,
+      birthDate: author.birthDate.toString(),
+    };
+
+    return {
+      ...book,
+      author: graphAuthor,
+    };
   }
 
   private checkIfAuthorExists(authorID: number) {
@@ -42,7 +67,7 @@ export class BookUseCase {
       .getAllAuthors()
       .find((author) => author.id === authorID);
 
-    if (!!author) throw new CannotFindAuthor("The author cannot be found");
+    if (!author) throw new CannotFindAuthor("The author cannot be found");
   }
 
   private graphToDB(graphBook: BookInput) {

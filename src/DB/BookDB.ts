@@ -9,7 +9,7 @@ export class BookDB implements IBooksDB {
 
   // Book Actions
   getBook(id: number) {
-    return this.bookList.find((book) => book.id === id);
+    return this.bookList.find((book) => book.id === id) || null;
   }
 
   getAllBooks() {
@@ -23,20 +23,22 @@ export class BookDB implements IBooksDB {
     return newBook;
   }
   updateBook(id: number, bookUpdate: Book) {
-    this.bookList.map((book) => {
-      if ((book.id = id)) return bookUpdate;
+    this.bookList = this.bookList.map((book) => {
+      if (book.id === id) return bookUpdate;
+      return book;
     });
     return bookUpdate;
   }
 
   deleteBook(id: number) {
-    this.bookList.splice(id, 1);
+    const index = this.bookList.findIndex((book) => book.id === id);
+    this.bookList.splice(index, 1);
     return this.bookList;
   }
 
   // Author Actions
   getAuthor(id: number) {
-    return this.authorList.find((author) => author.id === id);
+    return this.authorList.find((author) => author.id === id) || null;
   }
 
   getAllAuthors() {
@@ -50,13 +52,15 @@ export class BookDB implements IBooksDB {
     return newAuthor;
   }
   updateAuthor(id: number, authorUpdate: Author) {
-    this.authorList.map((author) => {
-      if ((author.id = id)) return authorUpdate;
+    this.authorList = this.authorList.map((author) => {
+      if (author.id === id) return authorUpdate;
+      return author;
     });
     return authorUpdate;
   }
   deleteAuthor(id: number) {
-    this.authorList.splice(id, 1);
+    const index = this.authorList.findIndex((author) => author.id === id);
+    this.authorList.splice(index, 1);
     return this.authorList;
   }
 }
