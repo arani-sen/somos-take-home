@@ -44,14 +44,14 @@ export class BookDB implements IBooksDB {
   }
 
   insertAuthor(book: Omit<Author, "id">) {
-    const newBook: Author = { ...book, id: this.authorID };
-    this.authorList.push(newBook);
+    const newAuthor: Author = { ...book, id: this.authorID };
+    this.authorList.push(newAuthor);
     this.authorID++;
-    return newBook;
+    return newAuthor;
   }
   updateAuthor(id: number, authorUpdate: Author) {
-    this.authorList.map((book) => {
-      if ((book.id = id)) return authorUpdate;
+    this.authorList.map((author) => {
+      if ((author.id = id)) return authorUpdate;
     });
     return authorUpdate;
   }

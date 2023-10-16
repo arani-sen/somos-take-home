@@ -1,4 +1,5 @@
 import { BookDB } from "../DB/BookDB";
+import { CannotFindAuthor } from "../entities/author";
 import { Book } from "../entities/book";
 import { BookInput } from "../generated/graphql";
 
@@ -19,7 +20,7 @@ export class BookUseCase {
 
   addBook(bookInput: BookInput) {
     const newBook = this.graphToDB(bookInput);
-
+    this.checkIfAuthorExists(bookInput.authorID);
     const insertedBook = this.bookDB.insertBook(newBook);
 
     return this.dbToGraph(insertedBook);
@@ -30,12 +31,18 @@ export class BookUseCase {
   }
 
   updateBook(id: number, bookInput: BookInput) {
-    const updatedBook = {
-      ...bookInput,
-      publishedDate: new Date(bookInput.publishedDate),
-    };
+    this.checkIfAuthorExists(bookInput.authorID);
+    const updatedBook = this.graphToDB(bookInput);
 
     this.bookDB.updateBook(id, { id, ...updatedBook });
+  }
+
+  private checkIfAuthorExists(authorID: number) {
+    const author = this.bookDB
+      .getAllAuthors()
+      .find((author) => author.id === authorID);
+
+    if (!!author) throw new CannotFindAuthor("The author cannot be found");
   }
 
   private graphToDB(graphBook: BookInput) {

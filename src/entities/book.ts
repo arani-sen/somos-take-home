@@ -21,10 +21,3 @@ export type Book = {
   coverImage?: String; // URL to location of the cover image
   publishedDate: Date;
 };
-
-export class CantFindAuthor extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "CreateDepositAccountFailed";
-  }
-}

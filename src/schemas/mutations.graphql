@@ -22,6 +22,12 @@ type Mutation {
   addAuthor(author: AuthorInput): Author
 
   """
+  This will update a specific book in the "database".
+  Returns the newly updated author.
+  """
+  updateAuthor(id: Int!, author: AuthorInput!): Author
+
+  """
   removes author (in order to remove an author from a book, use updateBook).  Returns the new list of authors
   """
   removeAuthor(id: Int!): [Author]
