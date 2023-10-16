@@ -39,7 +39,6 @@ export class AuthorUseCase {
     const matchingBooks = this.bookDB
       .getAllBooks()
       .filter((book) => book.authorID === id);
-
     if (matchingBooks.length > 0)
       throw new CannotRemoveAuthor(
         "You cannot remove an author attached to a book"

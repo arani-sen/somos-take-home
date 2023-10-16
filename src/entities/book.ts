@@ -18,7 +18,7 @@ export type Book = {
   id: number;
   title: string;
   authorID: number;
-  coverImage?: String; // URL to location of the cover image
+  coverImageURL?: String; // URL to location of the cover image
   publishedDate: Date;
 };
 

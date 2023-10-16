@@ -5,7 +5,7 @@ type Book {
   id: Int
   title: String
   author: Author
-  coverImage: String
+  coverImageURL: String
   publishedDate: String
 }
 

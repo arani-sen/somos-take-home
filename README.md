@@ -8,6 +8,7 @@ This is my take on the Somos take home task. Please review
 - Run `npm run start` to start the GraphQL Server. This generates the GraphQL Query types and spins up an Apollo GraphQL Server
 - Once running, you can go to `http://localhost:4000/` to interact with the server via Apollo Explorer.
 - Run `npm run codegen` to generate GraphQL Typescript types without needing to run the server.
+- Run `npm run test` to run test cases.
 
 ## GraphQL Endpoints
 

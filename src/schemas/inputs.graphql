@@ -1,7 +1,10 @@
 input BookInput {
   title: String!
   authorID: Int!
-  coverImage: String
+  """
+  This is the string to the url where the image is stored like in S3
+  """
+  coverImageURL: String
   publishedDate: String
 }
 
