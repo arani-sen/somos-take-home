@@ -24,13 +24,13 @@ You can also see all of the documentation on the Schema tab in the Apollo Explor
 
 ### Mutations
 
-| Mutation                      | Description                                                                        |
-| ----------------------------- | ---------------------------------------------------------------------------------- |
-| updateBook(id:int: book:Book) | update a specific book                                                             |
-| removeBook(id:int)            | removes a book                                                                     |
-| addBook(book:Book)            | adds a book                                                                        |
-| addAuthor(author:Author)      | adds an author (in order to add an author to a book you need to add/update a book) |
-| removeAuthor(id:int)          | removes author (in order to remove an author from a book, use updateBook)          |
+| Mutation                     | Description                                                                        |
+| ---------------------------- | ---------------------------------------------------------------------------------- |
+| updateBook(id:int book:Book) | update a specific book                                                             |
+| removeBook(id:int)           | removes a book                                                                     |
+| addBook(book:Book)           | adds a book                                                                        |
+| addAuthor(author:Author)     | adds an author (in order to add an author to a book you need to add/update a book) |
+| removeAuthor(id:int)         | removes author (in order to remove an author from a book, use updateBook)          |
 
 ## Project Structure
 
