@@ -32,7 +32,10 @@ export class BookUseCase {
   }
 
   removeBook(id: number) {
-    //TODO: Check if exists
+    const book = this.bookDB.getBook(id);
+
+    if (!book) throw new CannotFindBook("Cannot find book to remove");
+
     return this.bookDB
       .deleteBook(id)
       .map((book) => this.addAuthorToBook(book))
